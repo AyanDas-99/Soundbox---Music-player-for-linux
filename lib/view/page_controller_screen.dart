@@ -1,0 +1,143 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:soundbox/state/music_list.dart';
+import 'package:soundbox/view/music_controls_widget.dart';
+import 'package:soundbox/view/music_list_screen.dart';
+import 'package:split_view/split_view.dart';
+
+class PageControllerScreen extends ConsumerStatefulWidget {
+  const PageControllerScreen({super.key});
+
+  @override
+  ConsumerState<PageControllerScreen> createState() =>
+      _PageControllerScreenState();
+}
+
+class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
+  SplitViewController controller = SplitViewController(
+    weights: [0.3, 0.7],
+    limits: [WeightLimit(max: 0.4)],
+  );
+
+  bool searching = false;
+
+  Stream<String>? currentSearching;
+
+  @override
+  void initState() {
+    super.initState();
+    loadMusic();
+  }
+
+  loadMusic() async {
+    currentSearching = await ref.read(musicListProvider.notifier).load();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    return Scaffold(
+      appBar: AppBar(
+        leading: screenWidth < 700
+            ? Builder(builder: (context) {
+                return IconButton(
+                  iconSize: 15,
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  icon: const Icon(Icons.arrow_forward_ios_rounded),
+                );
+              })
+            : null,
+        backgroundColor: Colors.grey.shade900,
+        iconTheme: const IconThemeData(color: Colors.grey),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                searching = !searching;
+              });
+            },
+            icon: const Icon(Icons.search),
+          ),
+        ],
+        bottom: searching
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(50),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  child: const SearchBar(),
+                ),
+              )
+            : null,
+      ),
+      drawer: screenWidth < 700
+          ? Drawer(
+              backgroundColor: Colors.blueGrey.shade800,
+              child: const Column(),
+            )
+          : null,
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                child: SplitView(
+                  controller: controller,
+                  viewMode: SplitViewMode.Horizontal,
+                  gripColor: Colors.blueGrey.shade900,
+                  gripColorActive: Colors.grey.shade900,
+                  gripSize: 7,
+                  children: [
+                    if (screenWidth > 700)
+                      Container(
+                        color: Colors.blueGrey.shade800,
+                      ),
+                    Container(
+                      color: Colors.blueGrey.shade900,
+                      child: const MusicListScreen(),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                height: 150,
+                color: Colors.black,
+                child: const MusicControlsWidget(),
+              )
+            ],
+          ),
+          StreamBuilder(
+            stream: currentSearching,
+            builder: (context, snapshot) {
+              if(snapshot.data == null || snapshot.data!.isEmpty) {
+                return Container();
+              }
+              return Positioned(
+                bottom: 2,
+                right: 2,
+                child: Material(
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 10),
+                    height: 25,
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade700,
+                      border: Border.all(),
+                    ),
+                    child: Text(
+                      snapshot.data!,
+                      style: const TextStyle(
+                          color: Colors.white60, fontWeight: FontWeight.w200),
+                    ),
+                  ),
+                ),
+              );
+            },
+          )
+        ],
+      ),
+    );
+  }
+}
