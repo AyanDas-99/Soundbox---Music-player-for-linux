@@ -26,4 +26,9 @@ class MusicPlayer extends _$MusicPlayer {
     final player = ref.read(audioPlayerProvider);
     await player.resume();
   }
+
+  Stream<PlayerState> playerState() {
+    final player = ref.read(audioPlayerProvider);
+    return player.onPlayerStateChanged;
+  }
 }

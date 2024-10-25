@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soundbox/state/music_list.dart';
+import 'package:soundbox/view/components/nav_button.dart';
 import 'package:soundbox/view/music_controls_widget.dart';
 import 'package:soundbox/view/music_list_screen.dart';
+import 'package:soundbox/view/playlist_screen.dart';
 import 'package:split_view/split_view.dart';
 
 class PageControllerScreen extends ConsumerStatefulWidget {
@@ -14,9 +16,16 @@ class PageControllerScreen extends ConsumerStatefulWidget {
 }
 
 class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
+  final List<Widget> screens = [
+    const PlaylistScreen(),
+    const MusicListScreen(),
+  ];
+
+  int currentScreen = 0;
+
   SplitViewController controller = SplitViewController(
     weights: [0.3, 0.7],
-    limits: [WeightLimit(max: 0.4)],
+    limits: [WeightLimit(max: 0.4, min: 0.2)],
   );
 
   bool searching = false;
@@ -74,7 +83,29 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
       drawer: screenWidth < 700
           ? Drawer(
               backgroundColor: Colors.blueGrey.shade800,
-              child: const Column(),
+              child: Column(
+                children: [
+                  NavButton(
+                    icon: const Icon(Icons.view_list_rounded),
+                    selected: currentScreen == 0,
+                    text: 'Current Playlist',
+                    onPress: () {
+                      setState(() {
+                        currentScreen = 0;
+                      });
+                    },
+                  ),
+                  NavButton(
+                      icon: const Icon(Icons.music_note_rounded),
+                      selected: currentScreen == 1,
+                      text: 'All Songs',
+                      onPress: () {
+                        setState(() {
+                          currentScreen = 1;
+                        });
+                      }),
+                ],
+              ),
             )
           : null,
       body: Stack(
@@ -82,36 +113,63 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
           Column(
             children: [
               Expanded(
-                child: SplitView(
-                  controller: controller,
-                  viewMode: SplitViewMode.Horizontal,
-                  gripColor: Colors.blueGrey.shade900,
-                  gripColorActive: Colors.grey.shade900,
-                  gripSize: 7,
-                  children: [
-                    if (screenWidth > 700)
-                      Container(
-                        color: Colors.blueGrey.shade800,
+                child: (screenWidth > 700)
+                    ? SplitView(
+                        controller: controller,
+                        viewMode: SplitViewMode.Horizontal,
+                        gripColor: Colors.blueGrey.shade900,
+                        gripColorActive: Colors.grey.shade900,
+                        gripSize: 7,
+                        children: [
+                          Container(
+                            color: Colors.blueGrey.shade800,
+                            child: ListView(
+                              children: [
+                                NavButton(
+                                  icon: const Icon(Icons.view_list_rounded),
+                                  selected: currentScreen == 0,
+                                  text: 'Current Playlist',
+                                  onPress: () {
+                                    setState(() {
+                                      currentScreen = 0;
+                                    });
+                                  },
+                                ),
+                                NavButton(
+                                    icon: const Icon(Icons.music_note_rounded),
+                                    selected: currentScreen == 1,
+                                    text: 'All Songs',
+                                    onPress: () {
+                                      setState(() {
+                                        currentScreen = 1;
+                                      });
+                                    }),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            color: Colors.blueGrey.shade900,
+                            child: screens[currentScreen],
+                          ),
+                        ],
+                      )
+                    : Container(
+                        color: Colors.blueGrey.shade900,
+                        child: screens[currentScreen],
                       ),
-                    Container(
-                      color: Colors.blueGrey.shade900,
-                      child: const MusicListScreen(),
-                    ),
-                  ],
-                ),
               ),
               const SizedBox(height: 10),
-              Container(
-                height: 150,
-                color: Colors.black,
-                child: const MusicControlsWidget(),
+              const Divider(),
+              const SizedBox(
+                height: 120,
+                child: MusicControlsWidget(),
               )
             ],
           ),
           StreamBuilder(
             stream: currentSearching,
             builder: (context, snapshot) {
-              if(snapshot.data == null || snapshot.data!.isEmpty) {
+              if (snapshot.data == null || snapshot.data!.isEmpty) {
                 return Container();
               }
               return Positioned(
