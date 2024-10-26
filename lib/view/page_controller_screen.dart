@@ -161,7 +161,7 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
               const SizedBox(height: 10),
               const Divider(),
               const SizedBox(
-                height: 120,
+                // height: 120,
                 child: MusicControlsWidget(),
               )
             ],

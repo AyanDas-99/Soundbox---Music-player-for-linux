@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soundbox/state/current_playing_controller.dart';
 import 'package:soundbox/state/playlist.dart';
 import 'package:soundbox/view/components/music_image.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PlaylistMusicTile extends ConsumerStatefulWidget {
   const PlaylistMusicTile(this.song, {super.key});
@@ -19,9 +19,23 @@ class _PlaylistMusicTileState extends ConsumerState<PlaylistMusicTile> {
 
   @override
   Widget build(BuildContext context) {
+    final currentSong = ref.watch(currentPlayingControllerProvider);
     return ListTile(
-      leading: MusicImage(
-        track: File(widget.song.path),
+      leading: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (currentSong == widget.song) ...[
+            Container(
+              height: double.infinity,
+              width:5 ,
+              decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(10)),
+            ),
+            const SizedBox(width: 5),
+          ],
+          MusicImage(
+            track: File(widget.song.path),
+          ),
+        ],
       ),
       textColor: Colors.white,
       iconColor: Colors.white,

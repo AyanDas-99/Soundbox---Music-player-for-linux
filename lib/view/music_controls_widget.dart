@@ -4,13 +4,14 @@ import 'dart:typed_data';
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soundbox/state/audio_player_provider.dart';
 import 'package:soundbox/state/current_playing_controller.dart';
 import 'package:soundbox/view/components/music_image_placeholder.dart';
 import 'package:path/path.dart' as p;
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class MusicControlsWidget extends ConsumerStatefulWidget {
+class MusicControlsWidget extends StatefulHookConsumerWidget {
   const MusicControlsWidget({
     super.key,
   });
@@ -33,6 +34,8 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
       setState(() {
         image = data.pictures.first.bytes;
       });
+    } else {
+      image = null;
     }
   }
 
@@ -94,61 +97,68 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
   @override
   Widget build(BuildContext context) {
     final currentSong = ref.watch(currentPlayingControllerProvider);
+
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    useEffect(() {
+      getCover();
+      return null;
+    }, [currentSong]);
+
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Row(
-            children: [
-              SizedBox(
-                height: 70,
-                width: 70,
-                child: image == null
-                    ? const MusicImagePlaceholder()
-                    : Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        clipBehavior: Clip.hardEdge,
-                        child: Image.memory(
-                          image!,
-                          fit: BoxFit.cover,
-                        ),
+          if (screenWidth < 650) ...[
+            SizedBox(
+              height: 70,
+              width: 70,
+              child: image == null
+                  ? const MusicImagePlaceholder()
+                  : Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-              ),
-              const SizedBox(width: 20),
-              Text(
-                _position != null
-                    ? '$_positionText / $_durationText'
-                    : _duration != null
-                        ? _durationText
-                        : '',
-                style: const TextStyle(fontSize: 16.0, color: Colors.white),
-              ),
-              // Slider
-              Expanded(
-                child: Slider(
-                  onChanged: (value) {
-                    final duration = _duration;
-                    if (duration == null) {
-                      return;
-                    }
-                    final position = value * duration.inMilliseconds;
-                    player.seek(Duration(milliseconds: position.round()));
-                  },
-                  value: (_position != null &&
-                          _duration != null &&
-                          _position!.inMilliseconds > 0 &&
-                          _position!.inMilliseconds < _duration!.inMilliseconds)
-                      ? _position!.inMilliseconds / _duration!.inMilliseconds
-                      : 0.0,
-                ),
-              ),
-              // Controls
-              Row(
+                      clipBehavior: Clip.hardEdge,
+                      child: Image.memory(
+                        image!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              _position != null
+                  ? '$_positionText / $_durationText'
+                  : _duration != null
+                      ? _durationText
+                      : '',
+              style: const TextStyle(fontSize: 14.0, color: Colors.white),
+            ),
+            // Slider
+            Slider(
+              onChanged: (value) {
+                final duration = _duration;
+                if (duration == null) {
+                  return;
+                }
+                final position = value * duration.inMilliseconds;
+                player.seek(Duration(milliseconds: position.round()));
+              },
+              value: (_position != null &&
+                      _duration != null &&
+                      _position!.inMilliseconds > 0 &&
+                      _position!.inMilliseconds < _duration!.inMilliseconds)
+                  ? _position!.inMilliseconds / _duration!.inMilliseconds
+                  : 0.0,
+            ),
+            // Controls
+            SizedBox(
+              width: 170,
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
@@ -176,8 +186,92 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
+          if (screenWidth >= 650)
+            Row(
+              children: [
+                SizedBox(
+                  height: 70,
+                  width: 70,
+                  child: image == null
+                      ? const MusicImagePlaceholder()
+                      : Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          clipBehavior: Clip.hardEdge,
+                          child: Image.memory(
+                            image!,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                ),
+                const SizedBox(width: 20),
+                Text(
+                  _position != null
+                      ? '$_positionText / $_durationText'
+                      : _duration != null
+                          ? _durationText
+                          : '',
+                  style: const TextStyle(fontSize: 16.0, color: Colors.white),
+                ),
+                // Slider
+                Expanded(
+                  child: Slider(
+                    onChanged: (value) {
+                      final duration = _duration;
+                      if (duration == null) {
+                        return;
+                      }
+                      final position = value * duration.inMilliseconds;
+                      player.seek(Duration(milliseconds: position.round()));
+                    },
+                    value: (_position != null &&
+                            _duration != null &&
+                            _position!.inMilliseconds > 0 &&
+                            _position!.inMilliseconds <
+                                _duration!.inMilliseconds)
+                        ? _position!.inMilliseconds / _duration!.inMilliseconds
+                        : 0.0,
+                  ),
+                ),
+                // Controls
+                SizedBox(
+                  width: 170,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        key: const Key('prev_button'),
+                        onPressed: currentSong?.previous == null ? null : _prev,
+                        iconSize: 38.0,
+                        color: Colors.grey,
+                        icon: const Icon(Icons.skip_previous),
+                      ),
+                      IconButton(
+                        key: const Key('play_button'),
+                        onPressed: _isPlaying ? _pause : _play,
+                        iconSize: 38.0,
+                        icon: _isPlaying
+                            ? const Icon(Icons.pause)
+                            : const Icon(Icons.play_arrow),
+                        color: Colors.grey,
+                      ),
+                      IconButton(
+                        key: const Key('next_button'),
+                        onPressed: currentSong?.next == null ? null : _next,
+                        iconSize: 38.0,
+                        icon: const Icon(Icons.skip_next),
+                        color: Colors.grey,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           Text(
             p.basenameWithoutExtension(currentSong?.path ?? ''),
             style: const TextStyle(color: Colors.white),
