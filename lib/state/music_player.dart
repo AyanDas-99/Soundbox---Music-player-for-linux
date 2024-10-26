@@ -11,7 +11,7 @@ class MusicPlayer extends _$MusicPlayer {
     return;
   }
 
-   Future play(String path) async {
+  Future play(String path) async {
     final player = ref.read(audioPlayerProvider);
     await player.setSource(DeviceFileSource(path));
     await player.resume();
@@ -30,5 +30,10 @@ class MusicPlayer extends _$MusicPlayer {
   Stream<PlayerState> playerState() {
     final player = ref.read(audioPlayerProvider);
     return player.onPlayerStateChanged;
+  }
+
+  Future setVolume(double vol) async {
+    final player = ref.read(audioPlayerProvider);
+    await player.setVolume(vol);
   }
 }

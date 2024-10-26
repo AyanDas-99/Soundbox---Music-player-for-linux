@@ -10,6 +10,7 @@ import 'package:soundbox/view/components/music_image_placeholder.dart';
 import 'package:path/path.dart' as p;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:soundbox/view/components/volume_rocker.dart';
 
 class MusicControlsWidget extends StatefulHookConsumerWidget {
   const MusicControlsWidget({
@@ -270,6 +271,8 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
                     ],
                   ),
                 ),
+                const SizedBox(width: 10),
+                const VolumeRocker(),
               ],
             ),
           Text(
