@@ -18,11 +18,9 @@ class MusicList extends _$MusicList {
   Future<Stream<String>> load() async {
     StreamController<String> controller = StreamController<String>();
     final dir = await ref.read(musicDirectoryProvider.future);
-    print(dir);
     final music = _search(dir).asBroadcastStream();
     music.listen(
       (data) {
-        print(data);
         state = [...state, data.path];
         controller.sink.add(data.path);
       },

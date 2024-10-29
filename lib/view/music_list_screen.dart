@@ -1,11 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:soundbox/state/favourites/favourites.dart';
 import 'package:soundbox/state/music_list.dart';
 import 'package:path/path.dart' as p;
 import 'package:soundbox/state/music_player.dart';
+import 'package:soundbox/state/playlist.dart';
 import 'package:soundbox/view/components/music_image.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class MusicListScreen extends ConsumerStatefulWidget {
   const MusicListScreen({super.key});
@@ -41,11 +42,70 @@ class _MusicListScreenState extends ConsumerState<MusicListScreen> {
                 onTap: () {
                   ref.read(musicPlayerProvider.notifier).play(musicList[index]);
                 },
+                trailing: MusicListItemMenu(
+                  songPath: musicList[index],
+                ),
               ),
             ),
           ),
         ),
       ],
+    );
+  }
+}
+
+class MusicListItemMenu extends ConsumerStatefulWidget {
+  const MusicListItemMenu({
+    super.key,
+    required this.songPath,
+  });
+
+  final String songPath;
+
+  @override
+  ConsumerState<MusicListItemMenu> createState() => _MusicListItemMenuState();
+}
+
+class _MusicListItemMenuState extends ConsumerState<MusicListItemMenu> {
+  final MenuController _menuController = MenuController();
+
+  @override
+  Widget build(BuildContext context) {
+    return MenuAnchor(
+      controller: _menuController,
+      style: MenuStyle(
+        backgroundColor: WidgetStatePropertyAll(Colors.blueGrey.shade800),
+      ),
+      menuChildren: [
+        ListTile(
+          onTap: () async {
+            final messenger = ScaffoldMessenger.of(context);
+            final result = await ref
+                .read(favouritesProvider.notifier)
+                .addToFav(widget.songPath);
+            if (result.success) {
+              messenger.showSnackBar(
+                  const SnackBar(content: Text('Added to favourite')));
+            } else {
+              messenger.showSnackBar(SnackBar(content: Text(result.msg!)));
+            }
+            _menuController.close();
+          },
+          title: const Text(
+            'Add to favourites',
+            style: TextStyle(color: Colors.white70),
+          ),
+        ),
+      ],
+      builder: (context, controller, child) => IconButton(
+          onPressed: () {
+            if (controller.isOpen) {
+              controller.close();
+            } else {
+              controller.open();
+            }
+          },
+          icon: const Icon(Icons.more_vert)),
     );
   }
 }

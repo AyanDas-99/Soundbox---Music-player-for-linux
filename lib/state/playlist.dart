@@ -48,8 +48,6 @@ class Playlist extends _$Playlist {
     } else {
       relativeTo.insertAfter(song);
     }
-    print(
-        "moved ${song.path} ${after ? 'after' : 'before'} ${relativeTo.path}");
     _notifyListeners();
   }
 

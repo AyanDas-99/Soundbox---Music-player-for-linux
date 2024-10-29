@@ -44,6 +44,7 @@ dependencies:
   audio_metadata_reader: ^0.0.6
   hooks_riverpod: ^2.6.1
   flutter_hooks: ^0.20.5
+  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:

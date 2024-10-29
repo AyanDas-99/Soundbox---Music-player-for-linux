@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soundbox/state/current_playing_controller.dart';
 import 'package:soundbox/state/playlist.dart';
 import 'package:path/path.dart' as p;
 import 'package:soundbox/view/components/music_image.dart';
 import 'package:soundbox/view/components/playlist_music_tile.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PlaylistScreen extends ConsumerStatefulWidget {
   const PlaylistScreen({super.key});

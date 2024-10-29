@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soundbox/state/music_list.dart';
 import 'package:soundbox/view/components/nav_button.dart';
+import 'package:soundbox/view/favourites_screen.dart';
 import 'package:soundbox/view/music_controls_widget.dart';
 import 'package:soundbox/view/music_list_screen.dart';
 import 'package:soundbox/view/playlist_screen.dart';
 import 'package:split_view/split_view.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PageControllerScreen extends ConsumerStatefulWidget {
   const PageControllerScreen({super.key});
@@ -18,6 +19,7 @@ class PageControllerScreen extends ConsumerStatefulWidget {
 class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
   final List<Widget> screens = [
     const PlaylistScreen(),
+    const FavouritesScreen(),
     const MusicListScreen(),
   ];
 
@@ -96,12 +98,22 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
                     },
                   ),
                   NavButton(
+                    icon: const Icon(Icons.favorite_rounded),
+                    selected: currentScreen == 0,
+                    text: 'Favourites',
+                    onPress: () {
+                      setState(() {
+                        currentScreen = 1;
+                      });
+                    },
+                  ),
+                  NavButton(
                       icon: const Icon(Icons.music_note_rounded),
-                      selected: currentScreen == 1,
+                      selected: currentScreen == 2,
                       text: 'All Songs',
                       onPress: () {
                         setState(() {
-                          currentScreen = 1;
+                          currentScreen = 2;
                         });
                       }),
                 ],
@@ -136,12 +148,21 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
                                   },
                                 ),
                                 NavButton(
-                                    icon: const Icon(Icons.music_note_rounded),
+                                    icon: const Icon(Icons.favorite_rounded),
                                     selected: currentScreen == 1,
-                                    text: 'All Songs',
+                                    text: 'Favourites Screen',
                                     onPress: () {
                                       setState(() {
                                         currentScreen = 1;
+                                      });
+                                    }),
+                                NavButton(
+                                    icon: const Icon(Icons.music_note_rounded),
+                                    selected: currentScreen == 2,
+                                    text: 'All Songs',
+                                    onPress: () {
+                                      setState(() {
+                                        currentScreen = 2;
                                       });
                                     }),
                               ],

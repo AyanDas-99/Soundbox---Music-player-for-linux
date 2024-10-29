@@ -26,13 +26,11 @@ class _NavButtonState extends State<NavButton> {
         setState(() {
           backgroundColor = Colors.blueGrey.shade900;
         });
-        print('entered..');
       },
       onExit: (event) {
         setState(() {
           backgroundColor = Colors.transparent;
         });
-        print('exited..');
       },
       child: AnimatedContainer(
         margin: const EdgeInsets.all(10),

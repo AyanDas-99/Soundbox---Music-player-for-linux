@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import 'package:soundbox/state/current_playing_controller.dart';
+import 'package:soundbox/state/favourites/favourites.dart';
 import 'package:soundbox/state/playlist.dart';
 import 'package:soundbox/view/components/music_image.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -27,8 +28,9 @@ class _PlaylistMusicTileState extends ConsumerState<PlaylistMusicTile> {
           if (currentSong == widget.song) ...[
             Container(
               height: double.infinity,
-              width:5 ,
-              decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(10)),
+              width: 5,
+              decoration: BoxDecoration(
+                  color: Colors.blue, borderRadius: BorderRadius.circular(10)),
             ),
             const SizedBox(width: 5),
           ],
@@ -45,6 +47,16 @@ class _PlaylistMusicTileState extends ConsumerState<PlaylistMusicTile> {
           backgroundColor: WidgetStatePropertyAll(Colors.blueGrey.shade800),
         ),
         menuChildren: [
+          ListTile(
+            onTap: () async {
+              ref.read(favouritesProvider.notifier).addToFav(widget.song.path);
+              _menuController.close();
+            },
+            title: const Text(
+              'Add to favourites',
+              style: TextStyle(color: Colors.white70),
+            ),
+          ),
           ListTile(
             onTap: () async {
               ref.read(playlistProvider.notifier).removeFromQueue(widget.song);

@@ -11,20 +11,22 @@ import 'package:path/path.dart' as p;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:soundbox/view/components/volume_rocker.dart';
-import 'package:soundbox/view/detailed_screen.dart';
 
-class MusicControlsWidget extends StatefulHookConsumerWidget {
-  const MusicControlsWidget({
+class DetailedScreen extends StatefulHookConsumerWidget {
+  const DetailedScreen({
     super.key,
+    required this.image,
   });
+
+  final Uint8List? image;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() {
-    return _MusicControlsWidgetState();
+    return _DetailedScreenState();
   }
 }
 
-class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
+class _DetailedScreenState extends ConsumerState<DetailedScreen> {
   Uint8List? image;
 
   getCover() async {
@@ -61,6 +63,7 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
 
   @override
   void initState() {
+    image = widget.image;
     super.initState();
     // Use initial values from player
     _playerState = player.state;
@@ -106,41 +109,61 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
       return null;
     }, [currentSong]);
 
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (screenWidth < 650) ...[
-            SizedBox(
-                height: 70,
-                width: 70,
-                child: MusicImagePlaceholder(image: image)),
-            const SizedBox(height: 20),
+    final size = MediaQuery.of(context).size;
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_downward,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.of(context).maybePop();
+          },
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Hero(
+              tag: 'image',
+              child: SizedBox(
+                  height: size.width * 0.2,
+                  width: size.width * 0.2,
+                  child: MusicImagePlaceholder(image: image)),
+            ),
+            const SizedBox(width: 20),
             Text(
               _position != null
                   ? '$_positionText / $_durationText'
                   : _duration != null
                       ? _durationText
                       : '',
-              style: const TextStyle(fontSize: 14.0, color: Colors.white),
+              style: const TextStyle(fontSize: 16.0, color: Colors.white),
             ),
             // Slider
-            Slider(
-              onChanged: (value) {
-                final duration = _duration;
-                if (duration == null) {
-                  return;
-                }
-                final position = value * duration.inMilliseconds;
-                player.seek(Duration(milliseconds: position.round()));
-              },
-              value: (_position != null &&
-                      _duration != null &&
-                      _position!.inMilliseconds > 0 &&
-                      _position!.inMilliseconds < _duration!.inMilliseconds)
-                  ? _position!.inMilliseconds / _duration!.inMilliseconds
-                  : 0.0,
+            Expanded(
+              child: Slider(
+                onChanged: (value) {
+                  final duration = _duration;
+                  if (duration == null) {
+                    return;
+                  }
+                  final position = value * duration.inMilliseconds;
+                  player.seek(Duration(milliseconds: position.round()));
+                },
+                value: (_position != null &&
+                        _duration != null &&
+                        _position!.inMilliseconds > 0 &&
+                        _position!.inMilliseconds < _duration!.inMilliseconds)
+                    ? _position!.inMilliseconds / _duration!.inMilliseconds
+                    : 0.0,
+              ),
             ),
             // Controls
             SizedBox(
@@ -174,93 +197,14 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
                 ],
               ),
             ),
+            const SizedBox(width: 10),
+            const VolumeRocker(),
+            Text(
+              p.basenameWithoutExtension(currentSong?.path ?? ''),
+              style: const TextStyle(color: Colors.white),
+            )
           ],
-          if (screenWidth >= 650)
-            Row(
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(_createRoute(image));
-                  },
-                  child: Hero(
-                    tag: 'image',
-                    child: SizedBox(
-                      height: 70,
-                      width: 70,
-                      child: MusicImagePlaceholder(image: image),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Text(
-                  _position != null
-                      ? '$_positionText / $_durationText'
-                      : _duration != null
-                          ? _durationText
-                          : '',
-                  style: const TextStyle(fontSize: 16.0, color: Colors.white),
-                ),
-                // Slider
-                Expanded(
-                  child: Slider(
-                    onChanged: (value) {
-                      final duration = _duration;
-                      if (duration == null) {
-                        return;
-                      }
-                      final position = value * duration.inMilliseconds;
-                      player.seek(Duration(milliseconds: position.round()));
-                    },
-                    value: (_position != null &&
-                            _duration != null &&
-                            _position!.inMilliseconds > 0 &&
-                            _position!.inMilliseconds <
-                                _duration!.inMilliseconds)
-                        ? _position!.inMilliseconds / _duration!.inMilliseconds
-                        : 0.0,
-                  ),
-                ),
-                // Controls
-                SizedBox(
-                  width: 170,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        key: const Key('prev_button'),
-                        onPressed: currentSong?.previous == null ? null : _prev,
-                        iconSize: 38.0,
-                        color: Colors.grey,
-                        icon: const Icon(Icons.skip_previous),
-                      ),
-                      IconButton(
-                        key: const Key('play_button'),
-                        onPressed: _isPlaying ? _pause : _play,
-                        iconSize: 38.0,
-                        icon: _isPlaying
-                            ? const Icon(Icons.pause)
-                            : const Icon(Icons.play_arrow),
-                        color: Colors.grey,
-                      ),
-                      IconButton(
-                        key: const Key('next_button'),
-                        onPressed: currentSong?.next == null ? null : _next,
-                        iconSize: 38.0,
-                        icon: const Icon(Icons.skip_next),
-                        color: Colors.grey,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 10),
-                const VolumeRocker(),
-              ],
-            ),
-          Text(
-            p.basenameWithoutExtension(currentSong?.path ?? ''),
-            style: const TextStyle(color: Colors.white),
-          )
-        ],
+        ),
       ),
     );
   }
@@ -309,22 +253,4 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
   Future<void> _prev() async {
     ref.read(currentPlayingControllerProvider.notifier).playPrev();
   }
-}
-
-Route _createRoute(Uint8List? image) {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) =>
-        DetailedScreen(image: image),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(0, 1);
-      const end = Offset.zero;
-      const curve = Curves.ease;
-
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
-      );
-    },
-  );
 }
