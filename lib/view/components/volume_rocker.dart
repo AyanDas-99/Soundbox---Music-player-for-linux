@@ -1,19 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:soundbox/state/audio_player_provider.dart';
+import 'package:soundbox/state/music_player.dart';
 
-class VolumeRocker extends ConsumerWidget {
+class VolumeRocker extends ConsumerStatefulWidget {
   const VolumeRocker({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<VolumeRocker> createState() => _VolumeRockerState();
+}
+
+class _VolumeRockerState extends ConsumerState<VolumeRocker> {
+  double rockerValue = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    rockerValue = ref.read(audioPlayerProvider).volume;
+  }
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
     final player = ref.watch(audioPlayerProvider);
     return MenuAnchor(
       menuChildren: [
         Slider(
-            value: player.volume,
+          inactiveColor: Colors.grey,
+          activeColor: Colors.blue,
+            value: rockerValue,
             onChanged: (val) {
-              player.setVolume(val);
+              ref.read(musicPlayerProvider.notifier).setVolume(val);
+              setState(() {
+                rockerValue = val;
+              });
             })
       ],
       builder: (context, controller, child) => IconButton(
