@@ -106,161 +106,174 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
       return null;
     }, [currentSong]);
 
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (screenWidth < 650) ...[
-            SizedBox(
-                height: 70,
-                width: 70,
-                child: MusicImagePlaceholder(image: image)),
-            const SizedBox(height: 20),
-            Text(
-              _position != null
-                  ? '$_positionText / $_durationText'
-                  : _duration != null
-                      ? _durationText
-                      : '',
-              style: const TextStyle(fontSize: 14.0, color: Colors.white),
-            ),
-            // Slider
-            Slider(
-              onChanged: (value) {
-                final duration = _duration;
-                if (duration == null) {
-                  return;
-                }
-                final position = value * duration.inMilliseconds;
-                player.seek(Duration(milliseconds: position.round()));
-              },
-              value: (_position != null &&
-                      _duration != null &&
-                      _position!.inMilliseconds > 0 &&
-                      _position!.inMilliseconds < _duration!.inMilliseconds)
-                  ? _position!.inMilliseconds / _duration!.inMilliseconds
-                  : 0.0,
-            ),
-            // Controls
-            SizedBox(
-              width: 170,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    key: const Key('prev_button'),
-                    onPressed: currentSong?.previous == null ? null : _prev,
-                    iconSize: 38.0,
-                    color: Colors.grey,
-                    icon: const Icon(Icons.skip_previous),
-                  ),
-                  IconButton(
-                    key: const Key('play_button'),
-                    onPressed: _isPlaying ? _pause : _play,
-                    iconSize: 38.0,
-                    icon: _isPlaying
-                        ? const Icon(Icons.pause)
-                        : const Icon(Icons.play_arrow),
-                    color: Colors.grey,
-                  ),
-                  IconButton(
-                    key: const Key('next_button'),
-                    onPressed: currentSong?.next == null ? null : _next,
-                    iconSize: 38.0,
-                    icon: const Icon(Icons.skip_next),
-                    color: Colors.grey,
-                  ),
-                ],
-              ),
-            ),
-          ],
-          if (screenWidth >= 650)
-            Row(
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(_createRoute(image));
-                  },
-                  child: Hero(
-                    tag: 'image',
-                    child: SizedBox(
+    return InkWell(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      onTap: () {
+        Navigator.of(context).push(_createRoute(image));
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (screenWidth < 650) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Hero(
+                  tag: 'image',
+                  child: SizedBox(
                       height: 70,
                       width: 70,
-                      child: MusicImagePlaceholder(image: image),
+                      child: MusicImagePlaceholder(image: image)),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                _position != null
+                    ? '$_positionText / $_durationText'
+                    : _duration != null
+                        ? _durationText
+                        : '',
+                style: const TextStyle(fontSize: 14.0, color: Colors.white),
+              ),
+              // Slider
+              Slider(
+                onChanged: (value) {
+                  final duration = _duration;
+                  if (duration == null) {
+                    return;
+                  }
+                  final position = value * duration.inMilliseconds;
+                  player.seek(Duration(milliseconds: position.round()));
+                },
+                value: (_position != null &&
+                        _duration != null &&
+                        _position!.inMilliseconds > 0 &&
+                        _position!.inMilliseconds < _duration!.inMilliseconds)
+                    ? _position!.inMilliseconds / _duration!.inMilliseconds
+                    : 0.0,
+              ),
+              // Controls
+              SizedBox(
+                width: 170,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      key: const Key('prev_button'),
+                      onPressed: currentSong?.previous == null ? null : _prev,
+                      iconSize: 38.0,
+                      color: Colors.grey,
+                      icon: const Icon(Icons.skip_previous),
+                    ),
+                    IconButton(
+                      key: const Key('play_button'),
+                      onPressed: _isPlaying ? _pause : _play,
+                      iconSize: 38.0,
+                      icon: _isPlaying
+                          ? const Icon(Icons.pause)
+                          : const Icon(Icons.play_arrow),
+                      color: Colors.grey,
+                    ),
+                    IconButton(
+                      key: const Key('next_button'),
+                      onPressed: currentSong?.next == null ? null : _next,
+                      iconSize: 38.0,
+                      icon: const Icon(Icons.skip_next),
+                      color: Colors.grey,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            if (screenWidth >= 650)
+              Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Hero(
+                      tag: 'image',
+                      child: SizedBox(
+                        height: 70,
+                        width: 70,
+                        child: MusicImagePlaceholder(image: image),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 20),
-                Text(
-                  _position != null
-                      ? '$_positionText / $_durationText'
-                      : _duration != null
-                          ? _durationText
-                          : '',
-                  style: const TextStyle(fontSize: 16.0, color: Colors.white),
-                ),
-                // Slider
-                Expanded(
-                  child: Slider(
-                    onChanged: (value) {
-                      final duration = _duration;
-                      if (duration == null) {
-                        return;
-                      }
-                      final position = value * duration.inMilliseconds;
-                      player.seek(Duration(milliseconds: position.round()));
-                    },
-                    value: (_position != null &&
-                            _duration != null &&
-                            _position!.inMilliseconds > 0 &&
-                            _position!.inMilliseconds <
-                                _duration!.inMilliseconds)
-                        ? _position!.inMilliseconds / _duration!.inMilliseconds
-                        : 0.0,
+                  const SizedBox(width: 20),
+                  Text(
+                    _position != null
+                        ? '$_positionText / $_durationText'
+                        : _duration != null
+                            ? _durationText
+                            : '',
+                    style: const TextStyle(fontSize: 16.0, color: Colors.white),
                   ),
-                ),
-                // Controls
-                SizedBox(
-                  width: 170,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        key: const Key('prev_button'),
-                        onPressed: currentSong?.previous == null ? null : _prev,
-                        iconSize: 38.0,
-                        color: Colors.grey,
-                        icon: const Icon(Icons.skip_previous),
-                      ),
-                      IconButton(
-                        key: const Key('play_button'),
-                        onPressed: _isPlaying ? _pause : _play,
-                        iconSize: 38.0,
-                        icon: _isPlaying
-                            ? const Icon(Icons.pause)
-                            : const Icon(Icons.play_arrow),
-                        color: Colors.grey,
-                      ),
-                      IconButton(
-                        key: const Key('next_button'),
-                        onPressed: currentSong?.next == null ? null : _next,
-                        iconSize: 38.0,
-                        icon: const Icon(Icons.skip_next),
-                        color: Colors.grey,
-                      ),
-                    ],
+                  // Slider
+                  Expanded(
+                    child: Slider(
+                      onChanged: (value) {
+                        final duration = _duration;
+                        if (duration == null) {
+                          return;
+                        }
+                        final position = value * duration.inMilliseconds;
+                        player.seek(Duration(milliseconds: position.round()));
+                      },
+                      value: (_position != null &&
+                              _duration != null &&
+                              _position!.inMilliseconds > 0 &&
+                              _position!.inMilliseconds <
+                                  _duration!.inMilliseconds)
+                          ? _position!.inMilliseconds /
+                              _duration!.inMilliseconds
+                          : 0.0,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                const VolumeRocker(),
-              ],
-            ),
-          Text(
-            p.basenameWithoutExtension(currentSong?.path ?? ''),
-            style: const TextStyle(color: Colors.white),
-          )
-        ],
+                  // Controls
+                  SizedBox(
+                    width: 170,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          key: const Key('prev_button'),
+                          onPressed:
+                              currentSong?.previous == null ? null : _prev,
+                          iconSize: 38.0,
+                          color: Colors.grey,
+                          icon: const Icon(Icons.skip_previous),
+                        ),
+                        IconButton(
+                          key: const Key('play_button'),
+                          onPressed: _isPlaying ? _pause : _play,
+                          iconSize: 38.0,
+                          icon: _isPlaying
+                              ? const Icon(Icons.pause)
+                              : const Icon(Icons.play_arrow),
+                          color: Colors.grey,
+                        ),
+                        IconButton(
+                          key: const Key('next_button'),
+                          onPressed: currentSong?.next == null ? null : _next,
+                          iconSize: 38.0,
+                          icon: const Icon(Icons.skip_next),
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  const VolumeRocker(),
+                ],
+              ),
+            Text(
+              p.basenameWithoutExtension(currentSong?.path ?? ''),
+              style: const TextStyle(color: Colors.white),
+            )
+          ],
+        ),
       ),
     );
   }

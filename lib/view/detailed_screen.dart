@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -12,13 +13,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:soundbox/view/components/volume_rocker.dart';
 
+// ignore: must_be_immutable
 class DetailedScreen extends StatefulHookConsumerWidget {
-  const DetailedScreen({
+  DetailedScreen({
     super.key,
     required this.image,
   });
 
-  final Uint8List? image;
+  Uint8List? image;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() {
@@ -27,7 +29,7 @@ class DetailedScreen extends StatefulHookConsumerWidget {
 }
 
 class _DetailedScreenState extends ConsumerState<DetailedScreen> {
-  Uint8List? image;
+  double opacity = 1;
 
   getCover() async {
     final current = ref.watch(currentPlayingControllerProvider);
@@ -35,10 +37,10 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
     final data = await readMetadata(File(current.path), getImage: true);
     if (data.pictures.isNotEmpty) {
       setState(() {
-        image = data.pictures.first.bytes;
+        widget.image = data.pictures.first.bytes;
       });
     } else {
-      image = null;
+      widget.image = null;
     }
   }
 
@@ -63,7 +65,6 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
 
   @override
   void initState() {
-    image = widget.image;
     super.initState();
     // Use initial values from player
     _playerState = player.state;
@@ -78,6 +79,11 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
           }),
         );
     _initStreams();
+    Future.delayed(Duration(milliseconds: 200), () {
+      setState(() {
+        opacity = 0.5;
+      });
+    });
   }
 
   @override
@@ -102,14 +108,13 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
   Widget build(BuildContext context) {
     final currentSong = ref.watch(currentPlayingControllerProvider);
 
-    final screenWidth = MediaQuery.of(context).size.width;
-
     useEffect(() {
       getCover();
       return null;
     }, [currentSong]);
 
-    final size = MediaQuery.of(context).size;
+    final size = min(
+        MediaQuery.of(context).size.height, MediaQuery.of(context).size.width);
 
     return Scaffold(
       appBar: AppBar(
@@ -130,79 +135,126 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Hero(
-              tag: 'image',
-              child: SizedBox(
-                  height: size.width * 0.2,
-                  width: size.width * 0.2,
-                  child: MusicImagePlaceholder(image: image)),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                AnimatedOpacity(
+                  opacity: opacity,
+                  curve: Curves.easeOut,
+                  duration: const Duration(milliseconds: 500),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Hero(
+                      tag: 'image',
+                      child: Container(
+                          height: size * 0.6,
+                          width: size * 0.6,
+                          constraints: const BoxConstraints(
+                              maxWidth: 650, maxHeight: 650),
+                          child: MusicImagePlaceholder(image: widget.image)),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: min(400, size * 0.4),
+                  child: Container(
+                    width: size * 0.5,
+                    constraints: BoxConstraints(maxWidth: 450),
+                    child: AnimatedOpacity(
+                      opacity: (1 - opacity) / 0.5,
+                      duration: const Duration(milliseconds: 500),
+                      child: Text(
+                        p.basenameWithoutExtension(currentSong?.path ?? ''),
+                        softWrap: true,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                )
+              ],
             ),
-            const SizedBox(width: 20),
-            Text(
-              _position != null
-                  ? '$_positionText / $_durationText'
-                  : _duration != null
-                      ? _durationText
-                      : '',
-              style: const TextStyle(fontSize: 16.0, color: Colors.white),
-            ),
-            // Slider
-            Expanded(
-              child: Slider(
-                onChanged: (value) {
-                  final duration = _duration;
-                  if (duration == null) {
-                    return;
-                  }
-                  final position = value * duration.inMilliseconds;
-                  player.seek(Duration(milliseconds: position.round()));
-                },
-                value: (_position != null &&
-                        _duration != null &&
-                        _position!.inMilliseconds > 0 &&
-                        _position!.inMilliseconds < _duration!.inMilliseconds)
-                    ? _position!.inMilliseconds / _duration!.inMilliseconds
-                    : 0.0,
-              ),
+            Spacer(),
+            Row(
+              children: [
+                Text(
+                  _position != null
+                      ? '$_positionText / $_durationText'
+                      : _duration != null
+                          ? _durationText
+                          : '',
+                  style: const TextStyle(fontSize: 16.0, color: Colors.white),
+                ),
+                // Slider
+                Expanded(
+                  child: Slider(
+                    onChanged: (value) {
+                      final duration = _duration;
+                      if (duration == null) {
+                        return;
+                      }
+                      final position = value * duration.inMilliseconds;
+                      player.seek(Duration(milliseconds: position.round()));
+                    },
+                    value: (_position != null &&
+                            _duration != null &&
+                            _position!.inMilliseconds > 0 &&
+                            _position!.inMilliseconds <
+                                _duration!.inMilliseconds)
+                        ? _position!.inMilliseconds / _duration!.inMilliseconds
+                        : 0.0,
+                  ),
+                ),
+              ],
             ),
             // Controls
-            SizedBox(
-              width: 170,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    key: const Key('prev_button'),
-                    onPressed: currentSong?.previous == null ? null : _prev,
-                    iconSize: 38.0,
-                    color: Colors.grey,
-                    icon: const Icon(Icons.skip_previous),
+            Row(
+              children: [
+                Expanded(child: Container()),
+                Expanded(
+                  flex: 1,
+                  child: Center(
+                    child: SizedBox(
+                      width: 170,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            key: const Key('prev_button'),
+                            onPressed:
+                                currentSong?.previous == null ? null : _prev,
+                            iconSize: 38.0,
+                            color: Colors.grey,
+                            icon: const Icon(Icons.skip_previous),
+                          ),
+                          IconButton(
+                            key: const Key('play_button'),
+                            onPressed: _isPlaying ? _pause : _play,
+                            iconSize: 38.0,
+                            icon: _isPlaying
+                                ? const Icon(Icons.pause)
+                                : const Icon(Icons.play_arrow),
+                            color: Colors.grey,
+                          ),
+                          IconButton(
+                            key: const Key('next_button'),
+                            onPressed: currentSong?.next == null ? null : _next,
+                            iconSize: 38.0,
+                            icon: const Icon(Icons.skip_next),
+                            color: Colors.grey,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  IconButton(
-                    key: const Key('play_button'),
-                    onPressed: _isPlaying ? _pause : _play,
-                    iconSize: 38.0,
-                    icon: _isPlaying
-                        ? const Icon(Icons.pause)
-                        : const Icon(Icons.play_arrow),
-                    color: Colors.grey,
-                  ),
-                  IconButton(
-                    key: const Key('next_button'),
-                    onPressed: currentSong?.next == null ? null : _next,
-                    iconSize: 38.0,
-                    icon: const Icon(Icons.skip_next),
-                    color: Colors.grey,
-                  ),
-                ],
-              ),
+                ),
+                const Expanded(child: VolumeRocker()),
+              ],
             ),
-            const SizedBox(width: 10),
-            const VolumeRocker(),
-            Text(
-              p.basenameWithoutExtension(currentSong?.path ?? ''),
-              style: const TextStyle(color: Colors.white),
-            )
           ],
         ),
       ),

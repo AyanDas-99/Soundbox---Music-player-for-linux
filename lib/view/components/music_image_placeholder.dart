@@ -9,15 +9,14 @@ class MusicImagePlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.blueGrey,
-        borderRadius: BorderRadius.circular(10),
       ),
       height: 100,
       width: 100,
       child: image == null
           ? const Center(
-              child: Icon(Icons.music_note_rounded),
+              child: Icon(Icons.music_note_rounded, color: Colors.white),
             )
           : Image.memory(
               image!,
