@@ -4,7 +4,6 @@ import 'package:soundbox/state/favourites/favourites.dart';
 import 'package:soundbox/state/music_list.dart';
 import 'package:path/path.dart' as p;
 import 'package:soundbox/state/music_player.dart';
-import 'package:soundbox/state/playlist.dart';
 import 'package:soundbox/view/components/music_image.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

@@ -43,19 +43,11 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
   }
 
   PlayerState? _playerState;
-  Duration? _duration;
-  Duration? _position;
 
   StreamSubscription? _playerCompleteSubscription;
   StreamSubscription? _playerStateChangeSubscription;
 
   bool get _isPlaying => _playerState == PlayerState.playing;
-
-  bool get _isPaused => _playerState == PlayerState.paused;
-
-  String get _durationText => _duration?.toString().split('.').first ?? '';
-
-  String get _positionText => _position?.toString().split('.').first ?? '';
 
   AudioPlayer get player => ref.read(audioPlayerProvider);
 
@@ -64,17 +56,7 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
     super.initState();
     // Use initial values from player
     _playerState = player.state;
-    player.getDuration().then(
-          (value) => setState(() {
-            _duration = value;
-          }),
-        );
-    player.getCurrentPosition().then(
-          (value) => setState(() {
-            _position = value;
-          }),
-        );
-    _initStreams();
+   _initStreams();
   }
 
   @override
@@ -131,22 +113,7 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
               const SizedBox(height: 20),
               const MusicPositionTextWidget(),
               // Slider
-              Slider(
-                onChanged: (value) {
-                  final duration = _duration;
-                  if (duration == null) {
-                    return;
-                  }
-                  final position = value * duration.inMilliseconds;
-                  player.seek(Duration(milliseconds: position.round()));
-                },
-                value: (_position != null &&
-                        _duration != null &&
-                        _position!.inMilliseconds > 0 &&
-                        _position!.inMilliseconds < _duration!.inMilliseconds)
-                    ? _position!.inMilliseconds / _duration!.inMilliseconds
-                    : 0.0,
-              ),
+              const MusicSliderWidget(),
               // Controls
               SizedBox(
                 width: 170,
@@ -251,7 +218,6 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
     _playerCompleteSubscription = player.onPlayerComplete.listen((event) {
       setState(() {
         _playerState = PlayerState.stopped;
-        _position = Duration.zero;
       });
     });
 

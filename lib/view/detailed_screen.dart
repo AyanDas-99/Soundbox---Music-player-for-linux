@@ -49,21 +49,11 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
   }
 
   PlayerState? _playerState;
-  Duration? _duration;
-  Duration? _position;
 
-  // StreamSubscription? _durationSubscription;
-  // StreamSubscription? _positionSubscription;
   StreamSubscription? _playerCompleteSubscription;
   StreamSubscription? _playerStateChangeSubscription;
 
   bool get _isPlaying => _playerState == PlayerState.playing;
-
-  bool get _isPaused => _playerState == PlayerState.paused;
-
-  String get _durationText => _duration?.toString().split('.').first ?? '';
-
-  String get _positionText => _position?.toString().split('.').first ?? '';
 
   AudioPlayer get player => ref.read(audioPlayerProvider);
 
@@ -73,16 +63,7 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
     pageKey = UniqueKey();
     // Use initial values from player
     _playerState = player.state;
-    player.getDuration().then(
-          (value) => setState(() {
-            _duration = value;
-          }),
-        );
-    player.getCurrentPosition().then(
-          (value) => setState(() {
-            _position = value;
-          }),
-        );
+
     _initStreams();
     Future.delayed(const Duration(milliseconds: 200), () {
       setState(() {
@@ -102,8 +83,6 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
 
   @override
   void dispose() {
-    // _durationSubscription?.cancel();
-    // _positionSubscription?.cancel();
     _playerCompleteSubscription?.cancel();
     _playerStateChangeSubscription?.cancel();
     super.dispose();
@@ -191,11 +170,11 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
                 ],
               ),
               const Spacer(),
-              Row(
+              const Row(
                 children: [
                   MusicPositionTextWidget(),
                   // Slider
-                  const Expanded(
+                  Expanded(
                     child: MusicSliderWidget(),
                   ),
                 ],
@@ -256,7 +235,6 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
     _playerCompleteSubscription = player.onPlayerComplete.listen((event) {
       setState(() {
         _playerState = PlayerState.stopped;
-        _position = Duration.zero;
       });
     });
 
