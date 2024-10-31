@@ -17,6 +17,11 @@ class MusicPlayer extends _$MusicPlayer {
     await player.resume();
   }
 
+  Future seek(double position) async {
+    final player = ref.read(audioPlayerProvider);
+    await player.seek(Duration(milliseconds: position.round()));
+  }
+
   Future pause() async {
     final player = ref.read(audioPlayerProvider);
     await player.pause();

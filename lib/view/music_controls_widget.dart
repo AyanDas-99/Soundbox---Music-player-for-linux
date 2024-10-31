@@ -10,6 +10,8 @@ import 'package:soundbox/view/components/music_image_placeholder.dart';
 import 'package:path/path.dart' as p;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:soundbox/view/components/music_position_text_widget.dart';
+import 'package:soundbox/view/components/music_slider_widget.dart';
 import 'package:soundbox/view/components/volume_rocker.dart';
 import 'package:soundbox/view/detailed_screen.dart';
 
@@ -44,8 +46,6 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
   Duration? _duration;
   Duration? _position;
 
-  StreamSubscription? _durationSubscription;
-  StreamSubscription? _positionSubscription;
   StreamSubscription? _playerCompleteSubscription;
   StreamSubscription? _playerStateChangeSubscription;
 
@@ -88,8 +88,6 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
 
   @override
   void dispose() {
-    _durationSubscription?.cancel();
-    _positionSubscription?.cancel();
     _playerCompleteSubscription?.cancel();
     _playerStateChangeSubscription?.cancel();
     super.dispose();
@@ -100,6 +98,8 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
     final currentSong = ref.watch(currentPlayingControllerProvider);
 
     final screenWidth = MediaQuery.of(context).size.width;
+
+    print('rebuild..');
 
     useEffect(() {
       getCover();
@@ -129,14 +129,7 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
                 ),
               ),
               const SizedBox(height: 20),
-              Text(
-                _position != null
-                    ? '$_positionText / $_durationText'
-                    : _duration != null
-                        ? _durationText
-                        : '',
-                style: const TextStyle(fontSize: 14.0, color: Colors.white),
-              ),
+              const MusicPositionTextWidget(),
               // Slider
               Slider(
                 onChanged: (value) {
@@ -202,34 +195,10 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
                     ),
                   ),
                   const SizedBox(width: 20),
-                  Text(
-                    _position != null
-                        ? '$_positionText / $_durationText'
-                        : _duration != null
-                            ? _durationText
-                            : '',
-                    style: const TextStyle(fontSize: 16.0, color: Colors.white),
-                  ),
+                  const MusicPositionTextWidget(),
                   // Slider
-                  Expanded(
-                    child: Slider(
-                      onChanged: (value) {
-                        final duration = _duration;
-                        if (duration == null) {
-                          return;
-                        }
-                        final position = value * duration.inMilliseconds;
-                        player.seek(Duration(milliseconds: position.round()));
-                      },
-                      value: (_position != null &&
-                              _duration != null &&
-                              _position!.inMilliseconds > 0 &&
-                              _position!.inMilliseconds <
-                                  _duration!.inMilliseconds)
-                          ? _position!.inMilliseconds /
-                              _duration!.inMilliseconds
-                          : 0.0,
-                    ),
+                  const Expanded(
+                    child: MusicSliderWidget(),
                   ),
                   // Controls
                   SizedBox(
@@ -279,14 +248,6 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
   }
 
   void _initStreams() {
-    _durationSubscription = player.onDurationChanged.listen((duration) {
-      setState(() => _duration = duration);
-    });
-
-    _positionSubscription = player.onPositionChanged.listen(
-      (p) => setState(() => _position = p),
-    );
-
     _playerCompleteSubscription = player.onPlayerComplete.listen((event) {
       setState(() {
         _playerState = PlayerState.stopped;
@@ -326,6 +287,8 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
 
 Route _createRoute(Uint8List? image) {
   return PageRouteBuilder(
+    barrierDismissible: false,
+    opaque: false,
     pageBuilder: (context, animation, secondaryAnimation) =>
         DetailedScreen(image: image),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
