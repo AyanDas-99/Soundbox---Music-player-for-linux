@@ -1,0 +1,54 @@
+display_name: SoundBox 
+package_name: soundbox
+url: https://github.com/AyanDas-99/Soundbox---Music-player-for-linux
+icon: linux/assets/box.png
+license: MIT
+summary: A beautiful lightweight open-source cross-platform music player
+vendor: Ayan Das
+packager: Ayan Das 
+packagerEmail: ayandas9531@gmail.com
+
+maintainer:
+  name: Ayan Das
+  email: ayandas9531@gmail.com 
+
+priority: optional
+
+section: x11
+
+installed_size: 15700
+
+dependencies:
+  - clang
+  - cmake
+  - ninja-build
+  - pkg-config
+  - libgtk-3-dev
+  - liblzma-dev
+  - libgstreamer1.0-dev
+  - libgstreamer-plugins-base1.0-dev
+  - gstreamer1.0-plugins-good
+  - gstreamer1.0-plugins-bad
+
+essential: false
+
+
+postuninstall_scripts:
+  - echo "Sorry to see you go."
+
+keywords:
+  - Music Player
+  - Audioi Player
+  - Music
+  - Audio
+
+generic_name: Music Player
+
+categories:
+  - Music Player
+  - Utility
+  - Audio
+  - Entertainment
+  - Media
+
+startup_notify: true
