@@ -11,7 +11,7 @@ class VolumeRocker extends ConsumerStatefulWidget {
 }
 
 class _VolumeRockerState extends ConsumerState<VolumeRocker> {
-  double rockerValue = 0.0;
+  late double rockerValue;
 
   @override
   void initState() {
@@ -20,15 +20,13 @@ class _VolumeRockerState extends ConsumerState<VolumeRocker> {
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     final player = ref.watch(audioPlayerProvider);
     return MenuAnchor(
       menuChildren: [
         Slider(
-          inactiveColor: Colors.grey,
-          activeColor: Colors.blue,
+            inactiveColor: Colors.grey,
+            activeColor: Colors.blue,
             value: rockerValue,
             onChanged: (val) {
               ref.read(musicPlayerProvider.notifier).setVolume(val);

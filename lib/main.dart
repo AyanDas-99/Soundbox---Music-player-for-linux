@@ -3,6 +3,12 @@ import 'package:soundbox/view/page_controller_screen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() {
+  FlutterError.onError = (FlutterErrorDetails details) {
+    print('Flutter error: ${details.exception}');
+    if (details.stack != null) {
+      print('Stack trace: ${details.stack}');
+    }
+  };
   runApp(const ProviderScope(child: MyApp()));
 }
 

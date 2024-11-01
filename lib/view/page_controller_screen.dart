@@ -180,10 +180,16 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
                       ),
               ),
               const SizedBox(height: 10),
-              const Divider(),
-              const SizedBox(
+              Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                  colors: [
+                    Colors.blueGrey.shade800,
+                    Colors.grey.shade900,
+                  ],
+                )),
                 // height: 120,
-                child: MusicControlsWidget(),
+                child: const MusicControlsWidget(),
               )
             ],
           ),

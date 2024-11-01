@@ -8,12 +8,13 @@ class MusicImagePlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
       decoration: const BoxDecoration(
         color: Colors.blueGrey,
       ),
       height: 100,
       width: 100,
+      duration: const Duration(milliseconds: 500),
       child: image == null
           ? const Center(
               child: Icon(Icons.music_note_rounded, color: Colors.white),

@@ -256,7 +256,7 @@ Route _createRoute(Uint8List? image) {
     barrierDismissible: false,
     opaque: false,
     pageBuilder: (context, animation, secondaryAnimation) =>
-        DetailedScreen(image: image),
+        DetailedScreen(image: null,),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(0, 1);
       const end = Offset.zero;

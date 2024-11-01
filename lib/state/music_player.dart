@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:soundbox/state/audio_player_provider.dart';
@@ -11,10 +13,23 @@ class MusicPlayer extends _$MusicPlayer {
     return;
   }
 
-  Future play(String path) async {
+  Future<bool> play(String path) async {
     final player = ref.read(audioPlayerProvider);
-    await player.setSource(DeviceFileSource(path));
-    await player.resume();
+
+    // final source = DeviceFileSource(path);
+    // await player.setSource(source);
+    try {
+      final source = BytesSource(File(path).readAsBytesSync());
+      if (source.bytes.isEmpty) {
+        return false;
+      }
+      await source.setOnPlayer(player);
+      await player.resume();
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   Future seek(double position) async {

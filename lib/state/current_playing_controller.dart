@@ -16,14 +16,19 @@ class CurrentPlayingController extends _$CurrentPlayingController {
     return ref.read(playlistProvider).first;
   }
 
-  void playPrev() {
+  void playPrev() async {
     if (state == null) return;
     if (state!.previous == null) {
       return;
     }
 
-    ref.read(musicPlayerProvider.notifier).play(state!.previous!.path);
     state = state!.previous!;
+    final played = await ref
+        .read(musicPlayerProvider.notifier)
+        .play(state!.path);
+    if (!played) {
+      playPrev();
+    }
   }
 
   Future<bool> playFirst() async {
@@ -33,12 +38,15 @@ class CurrentPlayingController extends _$CurrentPlayingController {
     }
 
     state = playlist.first;
-    ref.read(musicPlayerProvider.notifier).play(state!.path);
-
+    final played =
+        await ref.read(musicPlayerProvider.notifier).play(state!.path);
+    if (!played) {
+      playNext();
+    }
     return true;
   }
 
-  void playNext() {
+  void playNext() async {
     final playlist = ref.read(playlistProvider);
     if (playlist.isEmpty) {
       return;
@@ -46,17 +54,28 @@ class CurrentPlayingController extends _$CurrentPlayingController {
 
     if (state == null || state?.next == null) {
       state = playlist.first;
-      ref.read(musicPlayerProvider.notifier).play(state!.path);
+      final played =
+          await ref.read(musicPlayerProvider.notifier).play(state!.path);
+      if (!played) {
+        playNext();
+      }
       return;
     }
 
     state = state?.next;
-    ref.read(musicPlayerProvider.notifier).play(state!.path);
+    final played =
+        await ref.read(musicPlayerProvider.notifier).play(state!.path);
+    if (!played) {
+      playNext();
+    }
   }
 
-  void play(SongListItem song) {
+  void play(SongListItem song) async {
     state = song;
-    ref.read(musicPlayerProvider.notifier).play(song.path);
+    final played = await ref.read(musicPlayerProvider.notifier).play(song.path);
+    if (!played) {
+      playNext();
+    }
   }
 
   _listenToStates() {
