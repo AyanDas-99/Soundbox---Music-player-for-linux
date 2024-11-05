@@ -7,7 +7,7 @@ part of 'current_playing_controller.dart';
 // **************************************************************************
 
 String _$currentPlayingControllerHash() =>
-    r'0bd2020cc41d3edf2e49a155117e7684d2a69256';
+    r'6b479f044148750bb66341e12027c919b90d5fa0';
 
 /// See also [CurrentPlayingController].
 @ProviderFor(CurrentPlayingController)

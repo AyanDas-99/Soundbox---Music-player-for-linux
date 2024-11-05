@@ -4,6 +4,7 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:soundbox/state/audio_player_provider.dart';
 import 'package:soundbox/state/current_playing_controller.dart';
@@ -91,7 +92,6 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
   @override
   Widget build(BuildContext context) {
     final currentSong = ref.watch(currentPlayingControllerProvider);
-    print('build.');
     useEffect(() {
       getCover();
       return null;
@@ -122,8 +122,8 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
             backgroundColor: Colors.transparent,
             leading: IconButton(
               icon: const Icon(
-                Icons.arrow_downward,
-                color: Colors.white,
+                CupertinoIcons.chevron_down,
+                color: Colors.grey,
               ),
               onPressed: () {
                 Navigator.of(context).pop();

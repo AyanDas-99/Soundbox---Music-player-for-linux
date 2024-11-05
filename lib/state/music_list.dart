@@ -4,7 +4,7 @@ import 'package:glob/glob.dart';
 import 'package:glob/list_local_fs.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:soundbox/state/music_directory.dart';
-import 'package:soundbox/state/playlist.dart';
+import 'package:soundbox/state/music_test.dart';
 
 part 'music_list.g.dart';
 
@@ -26,10 +26,20 @@ class MusicList extends _$MusicList {
       },
       onDone: () {
         controller.sink.add('');
-        ref.read(playlistProvider.notifier).populate();
+        ref.read(musicTestProvider);
       },
     );
     return controller.stream;
+  }
+
+  Future<bool> remove(String path) async {
+    if (!state.contains(path)) {
+      return false;
+    }
+    final values = state;
+    values.remove(path);
+    state = values;
+    return true;
   }
 
   Stream<File> _search(Directory dir) {

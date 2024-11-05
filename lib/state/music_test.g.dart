@@ -1,24 +1,24 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'music_player.dart';
+part of 'music_test.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$musicPlayerHash() => r'3f5edaf48f29d9e6eb9c4eea0a5f607b13cf8f3e';
+String _$musicTestHash() => r'c135088d0422672c950a9565e78d4e64f56a3aaf';
 
-/// See also [MusicPlayer].
-@ProviderFor(MusicPlayer)
-final musicPlayerProvider = AsyncNotifierProvider<MusicPlayer, void>.internal(
-  MusicPlayer.new,
-  name: r'musicPlayerProvider',
+/// See also [musicTest].
+@ProviderFor(musicTest)
+final musicTestProvider = AutoDisposeFutureProvider<void>.internal(
+  musicTest,
+  name: r'musicTestProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$musicPlayerHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$musicTestHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$MusicPlayer = AsyncNotifier<void>;
+typedef MusicTestRef = AutoDisposeFutureProviderRef<void>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

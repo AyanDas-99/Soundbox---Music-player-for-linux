@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:soundbox/state/music_list.dart';
 import 'package:soundbox/view/components/nav_button.dart';
+import 'package:soundbox/view/error_list_screen.dart';
 import 'package:soundbox/view/favourites_screen.dart';
 import 'package:soundbox/view/music_controls_widget.dart';
 import 'package:soundbox/view/music_list_screen.dart';
@@ -21,6 +22,7 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
     const PlaylistScreen(),
     const FavouritesScreen(),
     const MusicListScreen(),
+    const ErrorListScreen(),
   ];
 
   int currentScreen = 0;
@@ -99,7 +101,7 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
                   ),
                   NavButton(
                     icon: const Icon(Icons.favorite_rounded),
-                    selected: currentScreen == 0,
+                    selected: currentScreen == 1,
                     text: 'Favourites',
                     onPress: () {
                       setState(() {
@@ -114,6 +116,15 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
                       onPress: () {
                         setState(() {
                           currentScreen = 2;
+                        });
+                      }),
+                  NavButton(
+                      icon: const Icon(Icons.music_off_outlined),
+                      selected: currentScreen == 3,
+                      text: 'Import Errors',
+                      onPress: () {
+                        setState(() {
+                          currentScreen = 3;
                         });
                       }),
                 ],
@@ -163,6 +174,15 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
                                     onPress: () {
                                       setState(() {
                                         currentScreen = 2;
+                                      });
+                                    }),
+                                NavButton(
+                                    icon: const Icon(Icons.music_off_outlined),
+                                    selected: currentScreen == 3,
+                                    text: 'Import Errors',
+                                    onPress: () {
+                                      setState(() {
+                                        currentScreen = 3;
                                       });
                                     }),
                               ],
