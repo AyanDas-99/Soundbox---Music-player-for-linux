@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:soundbox/state/music_list.dart';
 import 'package:soundbox/view/components/nav_button.dart';
@@ -6,6 +7,7 @@ import 'package:soundbox/view/favourites_screen.dart';
 import 'package:soundbox/view/music_controls_widget.dart';
 import 'package:soundbox/view/music_list_screen.dart';
 import 'package:soundbox/view/playlist_screen.dart';
+import 'package:soundbox/view/settings/settings_screen.dart';
 import 'package:split_view/split_view.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -23,6 +25,7 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
     const FavouritesScreen(),
     const MusicListScreen(),
     const ErrorListScreen(),
+    const SettingsScreen(),
   ];
 
   int currentScreen = 0;
@@ -127,6 +130,15 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
                           currentScreen = 3;
                         });
                       }),
+                  NavButton(
+                      icon: const Icon(CupertinoIcons.wrench_fill),
+                      selected: currentScreen == 4,
+                      text: 'Settings',
+                      onPress: () {
+                        setState(() {
+                          currentScreen = 4;
+                        });
+                      }),
                 ],
               ),
             )
@@ -183,6 +195,16 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
                                     onPress: () {
                                       setState(() {
                                         currentScreen = 3;
+                                      });
+                                    }),
+                                NavButton(
+                                    icon:
+                                        const Icon(CupertinoIcons.wrench_fill),
+                                    selected: currentScreen == 4,
+                                    text: 'Settings',
+                                    onPress: () {
+                                      setState(() {
+                                        currentScreen = 4;
                                       });
                                     }),
                               ],

@@ -2,7 +2,7 @@ import 'dart:collection';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:soundbox/state/current_playing_controller.dart';
 import 'package:soundbox/state/music_list.dart';
-
+import 'dart:developer' as dev;
 part 'playlist.g.dart';
 
 @Riverpod(keepAlive: true)
@@ -13,7 +13,9 @@ class Playlist extends _$Playlist {
   }
 
   populate() {
+    dev.log('populating');
     final music = ref.read(musicListProvider);
+    print(music);
     final list = LinkedList<SongListItem>();
     list.addAll(music.map((song) => SongListItem(path: song)));
     state = list;

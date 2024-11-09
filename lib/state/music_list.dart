@@ -5,6 +5,7 @@ import 'package:glob/list_local_fs.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:soundbox/state/music_directory.dart';
 import 'package:soundbox/state/music_test.dart';
+import 'dart:developer' as dev;
 
 part 'music_list.g.dart';
 
@@ -16,6 +17,7 @@ class MusicList extends _$MusicList {
   }
 
   Future<Stream<String>> load() async {
+    state = [];
     StreamController<String> controller = StreamController<String>();
     final dir = await ref.read(musicDirectoryProvider.future);
     final music = _search(dir).asBroadcastStream();
