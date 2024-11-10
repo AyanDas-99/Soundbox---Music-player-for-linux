@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:soundbox/state/audio_player_provider.dart';
+import 'package:soundbox/state/audio_player/audio_player_provider.dart';
 import 'package:soundbox/state/current_playing_controller.dart';
 import 'package:soundbox/view/components/music_image_placeholder.dart';
 import 'package:path/path.dart' as p;
@@ -81,7 +81,6 @@ class _MusicControlsWidgetState extends ConsumerState<MusicControlsWidget> {
 
     final screenWidth = MediaQuery.of(context).size.width;
 
-    print('rebuild..');
 
     useEffect(() {
       getCover();

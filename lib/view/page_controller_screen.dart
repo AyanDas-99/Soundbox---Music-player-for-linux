@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:soundbox/state/music_list.dart';
+import 'package:soundbox/state/music_controller/music_list_initializer.dart';
 import 'package:soundbox/view/components/nav_button.dart';
 import 'package:soundbox/view/error_list_screen.dart';
 import 'package:soundbox/view/favourites_screen.dart';
@@ -10,6 +10,7 @@ import 'package:soundbox/view/playlist_screen.dart';
 import 'package:soundbox/view/settings/settings_screen.dart';
 import 'package:split_view/split_view.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter/scheduler.dart';
 
 class PageControllerScreen extends ConsumerStatefulWidget {
   const PageControllerScreen({super.key});
@@ -42,11 +43,14 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
   @override
   void initState() {
     super.initState();
-    loadMusic();
+    load();
   }
 
-  loadMusic() async {
-    currentSearching = await ref.read(musicListProvider.notifier).load();
+  // Initialize music list after UI finishes building
+  load() async {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      ref.read(musicListInitializerProvider.notifier).initialize();
+    });
   }
 
   @override

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:soundbox/state/audio_player_provider.dart';
+import 'package:soundbox/state/audio_player/audio_player_provider.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class MusicPositionTextWidget extends StatefulHookConsumerWidget {

@@ -76,7 +76,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 EdgeInsets.all(20))),
                         onPressed: () async {
                           final path = await FilePickerLinux().getDirectoryPath();
-                          print(path);
                           if (path != null) {
                             ref
                                 .read(musicDirectoryProvider.notifier)

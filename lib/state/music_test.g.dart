@@ -6,7 +6,7 @@ part of 'music_test.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$musicTestHash() => r'c135088d0422672c950a9565e78d4e64f56a3aaf';
+String _$musicTestHash() => r'b2de625f74adf68fad1402fd3b1139b97c5393f2';
 
 /// See also [musicTest].
 @ProviderFor(musicTest)

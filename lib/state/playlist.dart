@@ -15,7 +15,6 @@ class Playlist extends _$Playlist {
   populate() {
     dev.log('populating');
     final music = ref.read(musicListProvider);
-    print(music);
     final list = LinkedList<SongListItem>();
     list.addAll(music.map((song) => SongListItem(path: song)));
     state = list;

@@ -16,34 +16,41 @@ class _ErrorListScreenState extends ConsumerState<ErrorListScreen> {
   @override
   Widget build(BuildContext context) {
     final errorList = ref.watch(errorListProvider);
-    return Column(
-      children: [
-        const SizedBox(
-          height: 50,
-          child: Text(
+    return Padding(
+      padding: const EdgeInsets.only(left: 30, top: 30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          const Text(
             'Import Errors',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        if (errorList.isEmpty)
-          const Center(
-            child: Text('No import errors'),
-          ),
-        if (errorList.isNotEmpty)
-          Expanded(
-            child: ListView.builder(
-              itemCount: errorList.length,
-              itemBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  textColor: Colors.white,
-                  title: Text(p.basename(errorList[index])),
-                  iconColor: Colors.white,
+          const SizedBox(height: 10),
+          if (errorList.isEmpty)
+            const Center(
+              child: Text('No import errors'),
+            ),
+          if (errorList.isNotEmpty)
+            Expanded(
+              child: ListView.builder(
+                itemCount: errorList.length,
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    textColor: Colors.white,
+                    title: Text(p.basename(errorList[index])),
+                    iconColor: Colors.white,
+                  ),
                 ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }

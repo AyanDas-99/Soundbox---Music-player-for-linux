@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:soundbox/state/audio_player_provider.dart';
+import 'package:soundbox/state/audio_player/audio_player_provider.dart';
 
 part 'music_player.g.dart';
 

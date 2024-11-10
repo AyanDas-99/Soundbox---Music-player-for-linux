@@ -19,9 +19,11 @@ class _MusicImageState extends State<MusicImage> {
   getCover() async {
     final data = await readMetadata(widget.track, getImage: true);
     if (data.pictures.isNotEmpty) {
-      setState(() {
-        image = data.pictures.first.bytes;
-      });
+      if (mounted) {
+        setState(() {
+          image = data.pictures.first.bytes;
+        });
+      }
     }
   }
 
@@ -34,9 +36,6 @@ class _MusicImageState extends State<MusicImage> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 50,
-      width: 50,
-      child: MusicImagePlaceholder(image: image)
-    );
+        height: 50, width: 50, child: MusicImagePlaceholder(image: image));
   }
 }

@@ -18,47 +18,54 @@ class _FavouritesScreenState extends ConsumerState<FavouritesScreen> {
   @override
   Widget build(BuildContext context) {
     final favourites = ref.watch(favouritesProvider);
-    return Column(
-      children: [
-        const SizedBox(
-          height: 50,
-          child: Text(
+    return Padding(
+      padding: const EdgeInsets.only(left: 30, top: 30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          const Text(
             'Favourites',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        Expanded(
-          child: favourites.isEmpty
-              ? const Center(
-                  child: Text(
-                  'Empty',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
+          const SizedBox(height: 10),
+          Expanded(
+            child: favourites.isEmpty
+                ? const Center(
+                    child: Text(
+                    'Empty',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                    ),
+                  ))
+                : ListView.builder(
+                    itemCount: favourites.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          textColor: Colors.white,
+                          title: Text(
+                              p.basenameWithoutExtension(favourites[index])),
+                          iconColor: Colors.white,
+                          leading: MusicImage(track: File(favourites[index])),
+                          onTap: () {
+                            ref
+                                .read(musicPlayerProvider.notifier)
+                                .play(favourites[index]);
+                          },
+                        ),
+                      );
+                    },
                   ),
-                ))
-              : ListView.builder(
-                  itemCount: favourites.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        textColor: Colors.white,
-                        title:
-                            Text(p.basenameWithoutExtension(favourites[index])),
-                        iconColor: Colors.white,
-                        leading: MusicImage(track: File(favourites[index])),
-                        onTap: () {
-                          ref
-                              .read(musicPlayerProvider.notifier)
-                              .play(favourites[index]);
-                        },
-                      ),
-                    );
-                  },
-                ),
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 }

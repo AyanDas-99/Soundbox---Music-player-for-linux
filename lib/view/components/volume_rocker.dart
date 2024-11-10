@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:soundbox/state/audio_player_provider.dart';
+import 'package:soundbox/state/audio_player/audio_player_provider.dart';
 import 'package:soundbox/state/music_player.dart';
 
 class VolumeRocker extends ConsumerStatefulWidget {

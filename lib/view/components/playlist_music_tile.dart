@@ -4,7 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:mini_music_visualizer/mini_music_visualizer.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
-import 'package:soundbox/state/audio_player_provider.dart';
+import 'package:soundbox/state/audio_player/audio_player_provider.dart';
 import 'package:soundbox/state/current_playing_controller.dart';
 import 'package:soundbox/state/favourites/favourites.dart';
 import 'package:soundbox/state/playlist.dart';

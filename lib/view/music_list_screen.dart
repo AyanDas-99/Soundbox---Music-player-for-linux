@@ -19,36 +19,45 @@ class _MusicListScreenState extends ConsumerState<MusicListScreen> {
   @override
   Widget build(BuildContext context) {
     final musicList = ref.watch(musicListProvider);
-    return Column(
-      children: [
-        const SizedBox(
-          height: 50,
-          child: Text(
-            'All songs',
-            style: TextStyle(color: Colors.white),
+    return Padding(
+      padding: const EdgeInsets.only(left: 30, top: 30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          const Text(
+            'All Songs',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: musicList.length,
-            itemBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                textColor: Colors.white,
-                title: Text(p.basenameWithoutExtension(musicList[index])),
-                iconColor: Colors.white,
-                leading: MusicImage(track: File(musicList[index])),
-                onTap: () {
-                  ref.read(musicPlayerProvider.notifier).play(musicList[index]);
-                },
-                trailing: MusicListItemMenu(
-                  songPath: musicList[index],
+          const SizedBox(height: 10),
+          Expanded(
+            child: ListView.builder(
+              itemCount: musicList.length,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  textColor: Colors.white,
+                  title: Text(p.basenameWithoutExtension(musicList[index])),
+                  iconColor: Colors.white,
+                  leading: MusicImage(track: File(musicList[index])),
+                  onTap: () {
+                    ref
+                        .read(musicPlayerProvider.notifier)
+                        .play(musicList[index]);
+                  },
+                  trailing: MusicListItemMenu(
+                    songPath: musicList[index],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

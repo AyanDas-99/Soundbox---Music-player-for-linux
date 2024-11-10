@@ -6,8 +6,6 @@ import 'package:soundbox/state/error_list.dart';
 import 'package:soundbox/state/music_list.dart';
 import 'dart:developer' as dev;
 
-import 'package:soundbox/state/playlist.dart';
-
 part 'music_test.g.dart';
 
 @riverpod
@@ -22,7 +20,7 @@ Future<void> musicTest(Ref ref) async {
   // });
   dev.log('Music test run');
   try {
-    for (var path in allMusic) {
+   for (var path in allMusic) {
       // dev.log('Testing $path');
       // Step 1: Check if the file exists
       final source = BytesSource(File(path).readAsBytesSync());
@@ -41,8 +39,6 @@ Future<void> musicTest(Ref ref) async {
   } catch (e) {
     // 
   } finally {
-    ref.read(playlistProvider.notifier).populate();
-
     await audioPlayer.dispose();
   }
 }
