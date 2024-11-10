@@ -8,6 +8,7 @@ import 'package:soundbox/view/music_controls_widget.dart';
 import 'package:soundbox/view/music_list_screen.dart';
 import 'package:soundbox/view/playlist_screen.dart';
 import 'package:soundbox/view/settings/settings_screen.dart';
+import 'package:soundbox/view/stream/stream_screen.dart';
 import 'package:split_view/split_view.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter/scheduler.dart';
@@ -26,6 +27,7 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
     const FavouritesScreen(),
     const MusicListScreen(),
     const ErrorListScreen(),
+    const StreamScreen(),
     const SettingsScreen(),
   ];
 
@@ -135,12 +137,21 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
                         });
                       }),
                   NavButton(
-                      icon: const Icon(CupertinoIcons.wrench_fill),
+                      icon: const Icon(CupertinoIcons.wifi),
                       selected: currentScreen == 4,
-                      text: 'Settings',
+                      text: 'Stream',
                       onPress: () {
                         setState(() {
                           currentScreen = 4;
+                        });
+                      }),
+                  NavButton(
+                      icon: const Icon(CupertinoIcons.wrench_fill),
+                      selected: currentScreen == 5,
+                      text: 'Settings',
+                      onPress: () {
+                        setState(() {
+                          currentScreen = 5;
                         });
                       }),
                 ],
@@ -202,13 +213,22 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
                                       });
                                     }),
                                 NavButton(
-                                    icon:
-                                        const Icon(CupertinoIcons.wrench_fill),
+                                    icon: const Icon(CupertinoIcons.wifi),
                                     selected: currentScreen == 4,
-                                    text: 'Settings',
+                                    text: 'Stream',
                                     onPress: () {
                                       setState(() {
                                         currentScreen = 4;
+                                      });
+                                    }),
+                                NavButton(
+                                    icon:
+                                        const Icon(CupertinoIcons.wrench_fill),
+                                    selected: currentScreen == 5,
+                                    text: 'Settings',
+                                    onPress: () {
+                                      setState(() {
+                                        currentScreen = 5;
                                       });
                                     }),
                               ],

@@ -91,7 +91,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             ),
                             SizedBox(width: 10),
                             Text(
-                              'Browser',
+                              'Browse',
                               style: TextStyle(color: Colors.white),
                             ),
                           ],
