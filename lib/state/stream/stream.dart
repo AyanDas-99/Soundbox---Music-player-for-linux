@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:soundbox/state/audio_player/audio_player_provider.dart';
 
@@ -12,14 +13,8 @@ class Stream extends _$Stream {
 
   Future<StreamResult> play(String url) async {
     final player = ref.read(audioPlayerProvider);
-    player.onLog.listen((String log) => print(log), onError: (e, st) {
-      // On error
-      // ref.read(musicListProvider.notifier).remove(path);
-      print(e);
-    });
-
     try {
-      await player.setSourceUrl(url);
+      await player.play(UrlSource(url));
       return StreamResult(success: true);
     } catch (e) {
       return StreamResult(success: false, error: e.toString());
