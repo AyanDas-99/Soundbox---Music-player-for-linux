@@ -13,7 +13,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:soundbox/view/components/music_position_text_widget.dart';
 import 'package:soundbox/view/components/music_slider_widget.dart';
 import 'package:soundbox/view/components/volume_rocker.dart';
-import 'package:soundbox/view/detailed_screen.dart';
+import 'package:soundbox/view/detailed/detailed_screen.dart';
 
 class MusicControlsWidget extends StatefulHookConsumerWidget {
   const MusicControlsWidget({

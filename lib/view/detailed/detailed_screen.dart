@@ -9,13 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:soundbox/state/audio_player/audio_player_provider.dart';
 import 'package:soundbox/state/current_playing_controller.dart';
 import 'package:soundbox/view/components/music_image_placeholder.dart';
-import 'package:path/path.dart' as p;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:soundbox/view/components/music_position_text_widget.dart';
 import 'package:soundbox/view/components/music_slider_widget.dart';
 import 'package:soundbox/view/components/volume_rocker.dart';
-import 'package:soundbox/view/extensions/string_extension.dart';
+import 'package:soundbox/view/detailed/components/animated_text.dart';
 
 // ignore: must_be_immutable
 class DetailedScreen extends StatefulHookConsumerWidget {
@@ -159,22 +158,13 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
                     ),
                     Positioned(
                       top: min(400, size * 0.4),
-                      child: Container(
-                        width: size * 0.5,
-                        constraints: const BoxConstraints(maxWidth: 450),
-                        child: AnimatedOpacity(
-                          opacity: (1 - opacity) / 0.5,
-                          duration: const Duration(milliseconds: 500),
-                          child: Text(
-                            p.basenameWithoutExtension(
-                                currentSong?.path.shortened() ?? ''),
-                            softWrap: true,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
+                      child: AnimatedOpacity(
+                        opacity: (1 - opacity) / 0.5,
+                        duration: const Duration(milliseconds: 500),
+                        child: ClipRect(
+                          child: AnimatedText(
+                            currentSong: currentSong,
+                            playing: _isPlaying,
                           ),
                         ),
                       ),
