@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:soundbox/state/image_color/image_color.dart';
+import 'package:soundbox/state/loading/loading.dart';
 import 'package:soundbox/state/music_controller/music_list_initializer.dart';
+import 'package:soundbox/view/components/app_loader.dart';
 import 'package:soundbox/view/components/nav_button.dart';
 import 'package:soundbox/view/error_list_screen.dart';
 import 'package:soundbox/view/favourites_screen.dart';
@@ -34,7 +38,7 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
   int currentScreen = 0;
 
   SplitViewController controller = SplitViewController(
-    weights: [0.3, 0.7],
+    weights: [0.2, 0.8],
     limits: [WeightLimit(max: 0.4, min: 0.2)],
   );
 
@@ -58,6 +62,16 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final isLoading = ref.watch(loadingProvider);
+
+    final colorScheme = ref.watch(imageColorProvider);
+
+    if (isLoading) {
+      // Loading page
+      return AppLoader();
+    }
+
+    // Real Page
     return Scaffold(
       appBar: AppBar(
         leading: screenWidth < 700
@@ -234,29 +248,25 @@ class _PageControllerScreenState extends ConsumerState<PageControllerScreen> {
                               ],
                             ),
                           ),
-                          Container(
-                            color: Colors.blueGrey.shade900,
+                          AnimatedContainer(
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(colors: [
+                              colorScheme.primary,
+                              colorScheme.secondary,
+                              colorScheme.tertiary,
+                            ])),
+                            duration: const Duration(milliseconds: 500),
                             child: screens[currentScreen],
                           ),
                         ],
                       )
                     : Container(
-                        color: Colors.blueGrey.shade900,
+                        // color: Colors.blueGrey.shade900,
                         child: screens[currentScreen],
                       ),
               ),
               const SizedBox(height: 10),
-              Container(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                  colors: [
-                    Colors.blueGrey.shade800,
-                    Colors.grey.shade900,
-                  ],
-                )),
-                // height: 120,
-                child: const MusicControlsWidget(),
-              )
+              const MusicControlsWidget()
             ],
           ),
           StreamBuilder(

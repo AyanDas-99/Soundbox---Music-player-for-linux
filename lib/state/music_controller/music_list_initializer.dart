@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:soundbox/state/loading/loading.dart';
 import 'package:soundbox/state/music_list.dart';
 import 'package:soundbox/state/music_test.dart';
 import 'package:soundbox/state/playlist.dart';
@@ -15,10 +16,13 @@ class MusicListInitializer extends _$MusicListInitializer {
   }
 
   Future initialize() async {
+    ref.read(loadingProvider.notifier).update(true);
     final allSongsLoadController =
         await ref.read(musicListProvider.notifier).load();
     await for (var _ in allSongsLoadController) {}
     await ref.read(musicTestProvider.future);
     ref.read(playlistProvider.notifier).populate();
+
+    ref.read(loadingProvider.notifier).update(false);
   }
 }

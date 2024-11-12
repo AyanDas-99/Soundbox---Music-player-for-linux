@@ -32,9 +32,9 @@ class _NavButtonState extends State<NavButton> {
           backgroundColor = Colors.transparent;
         });
       },
-      child: AnimatedContainer(
+      child: Container(
         margin: const EdgeInsets.all(10),
-        duration: const Duration(milliseconds: 200),
+        // duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
         color: widget.selected ? Colors.blue : backgroundColor,
         borderRadius: BorderRadius.circular(20)

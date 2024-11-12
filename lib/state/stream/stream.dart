@@ -1,4 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:soundbox/state/audio_player/audio_player_provider.dart';
 
@@ -16,6 +17,11 @@ class Stream extends _$Stream {
     try {
       await player.play(UrlSource(url));
       return StreamResult(success: true);
+    } on AudioPlayerException catch (audioException) {
+      return StreamResult(
+          success: false, error: audioException.cause.toString());
+    } on PlatformException catch (platformException) {
+      return StreamResult(success: false, error: platformException.message);
     } catch (e) {
       return StreamResult(success: false, error: e.toString());
     }

@@ -63,6 +63,7 @@ class _StreamScreenState extends ConsumerState<StreamScreen> {
                 onPressed: loading
                     ? null
                     : () async {
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
                         if (_urlController.text.isEmpty) {
                           return;
                         }
@@ -72,7 +73,11 @@ class _StreamScreenState extends ConsumerState<StreamScreen> {
                         final result = await ref
                             .read(streamProvider.notifier)
                             .play(_urlController.text);
-                        print(result);
+                        if (!result.success) {
+                          scaffoldMessenger.showSnackBar(SnackBar(
+                              content:
+                                  Text(result.error ?? 'Error playing audio')));
+                        }
                         setState(() {
                           loading = false;
                         });
