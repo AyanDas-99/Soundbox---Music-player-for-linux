@@ -24,16 +24,19 @@ class _VolumeRockerState extends ConsumerState<VolumeRocker> {
     final player = ref.watch(audioPlayerProvider);
     return MenuAnchor(
       menuChildren: [
-        Slider(
-            inactiveColor: Colors.grey,
-            activeColor: Colors.blue,
-            value: rockerValue,
-            onChanged: (val) {
-              ref.read(musicPlayerProvider.notifier).setVolume(val);
-              setState(() {
-                rockerValue = val;
-              });
-            })
+        Container(
+          color: Colors.blueGrey.shade900,
+          child: Slider(
+              inactiveColor: Colors.grey,
+              activeColor: Colors.blue,
+              value: rockerValue,
+              onChanged: (val) {
+                ref.read(musicPlayerProvider.notifier).setVolume(val);
+                setState(() {
+                  rockerValue = val;
+                });
+              }),
+        )
       ],
       builder: (context, controller, child) => IconButton(
         color: Colors.grey,

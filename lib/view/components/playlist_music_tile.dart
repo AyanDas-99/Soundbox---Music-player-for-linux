@@ -57,9 +57,9 @@ class _PlaylistMusicTileState extends ConsumerState<PlaylistMusicTile> {
         children: [
           if (currentSong == widget.song)
             MiniMusicVisualizer(
-              radius: 10,
-              color: Colors.purple,
-              width: 8,
+              radius: 7,
+              color: Colors.white,
+              width: 5,
               height: 20,
               animate: playing,
             ),

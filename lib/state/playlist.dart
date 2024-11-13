@@ -21,22 +21,23 @@ class Playlist extends _$Playlist {
   }
 
   addToQueue(SongListItem song) {
+    final realSong = state.where((item) => item.path == song.path).firstOrNull;
     final playingSong = ref.read(currentPlayingControllerProvider);
-    state.remove(song);
+    if (realSong != null) {
+      state.remove(realSong);
+    }
     if (playingSong == null) {
       state.addFirst(song);
     } else {
-      if (state.first.path == playingSong.path) {
-        state.first.insertAfter(song);
-      } else {
-        state.addFirst(song);
-      }
+      state.firstWhere((song) => song == playingSong).insertAfter(song);
     }
     _notifyListeners();
   }
 
   removeFromQueue(SongListItem song) {
-    state.remove(song);
+    final realOne = state.where((item) => item.path == song.path).firstOrNull;
+    if (realOne == null) return;
+    state.remove(realOne);
 
     _notifyListeners();
   }

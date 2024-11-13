@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:soundbox/state/current_playing_controller.dart';
 import 'package:soundbox/state/favourites/favourites.dart';
 import 'package:soundbox/state/music_list.dart';
 import 'package:path/path.dart' as p;
 import 'package:soundbox/state/music_player.dart';
+import 'package:soundbox/state/playlist.dart';
 import 'package:soundbox/view/components/music_image.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -45,10 +47,9 @@ class _MusicListScreenState extends ConsumerState<MusicListScreen> {
                   iconColor: Colors.white,
                   leading: MusicImage(track: File(musicList[index])),
                   onTap: () {
-                    ref
-                        .read(musicPlayerProvider.notifier)
-                        .play(musicList[index]);
-                  },
+                    ref.read(playlistProvider.notifier).addToQueue(SongListItem(path: musicList[index]));
+                    ref.read(currentPlayingControllerProvider.notifier).play(SongListItem(path: musicList[index]));
+                 },
                   trailing: MusicListItemMenu(
                     songPath: musicList[index],
                   ),

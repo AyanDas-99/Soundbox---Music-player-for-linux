@@ -23,9 +23,8 @@ class CurrentPlayingController extends _$CurrentPlayingController {
     }
 
     state = state!.previous!;
-    final played = await ref
-        .read(musicPlayerProvider.notifier)
-        .play(state!.path);
+    final played =
+        await ref.read(musicPlayerProvider.notifier).play(state!.path);
     if (!played) {
       playPrev();
     }
@@ -71,10 +70,16 @@ class CurrentPlayingController extends _$CurrentPlayingController {
   }
 
   void play(SongListItem song) async {
-    state = song;
-    final played = await ref.read(musicPlayerProvider.notifier).play(song.path);
+    final playlist = ref.read(playlistProvider);
+    final realSong =
+        playlist.where((item) => item.path == song.path).firstOrNull;
+    if (realSong == null) return;
+    final played =
+        await ref.read(musicPlayerProvider.notifier).play(realSong.path);
     if (!played) {
       playNext();
+    } else {
+      state = realSong;
     }
   }
 

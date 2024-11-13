@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:soundbox/state/audio_player/audio_player_provider.dart';
 import 'package:soundbox/state/current_playing_controller.dart';
+import 'package:soundbox/state/image_color/image_color.dart';
 import 'package:soundbox/view/components/music_image_placeholder.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -91,6 +92,7 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
   @override
   Widget build(BuildContext context) {
     final currentSong = ref.watch(currentPlayingControllerProvider);
+    final colorScheme = ref.watch(imageColorProvider);
     useEffect(() {
       getCover();
       return null;
@@ -105,15 +107,17 @@ class _DetailedScreenState extends ConsumerState<DetailedScreen> {
       onDismissed: (direction) {
         Navigator.of(context).pop();
       },
-      child: Container(
+      child: AnimatedContainer(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.blueGrey.shade800,
-              Colors.grey.shade900,
+              colorScheme.primary,
+              colorScheme.secondary,
+              colorScheme.tertiary,
             ],
           ),
         ),
+        duration: const Duration(milliseconds: 500),
         child: Scaffold(
           backgroundColor: Colors.transparent,
           // extendBodyBehindAppBar: true,

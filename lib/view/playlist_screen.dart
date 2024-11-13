@@ -84,7 +84,8 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
               itemCount: playlist.length,
               itemBuilder: (context, index) {
                 return ReorderableDelayedDragStartListener(
-                  key: Key(playlist.elementAt(index).path),
+                  // key: Key(playlist.elementAt(index).path),
+                  key: Key(index.toString()),
                   index: index,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
